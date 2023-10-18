@@ -20,6 +20,8 @@ template<class T>
 class RBT {
 private:
     Node<T>* root;
+
+    void fixTreeAfterInsert(Node<T>* node);
 public:
     RBT();
     ~RBT();
@@ -28,6 +30,8 @@ public:
 
     void insert(T data);
     void remove(T data);
+
+    Node<T>* searchFromNode(Node<T>* node, T data) const;
     Node<T>* search(T data) const;
 
     void leftRotate(Node<T>* node);
@@ -57,6 +61,60 @@ inline Node<T>::~Node() {
 }
 
 template<class T>
+inline void RBT<T>::fixTreeAfterInsert(Node<T>* node) {
+    Node<T>* x;
+
+    while (node->parent->color == 1) {
+        if (node->parent == node->parent->parent->right) {
+            x = node->parent->parent->left;
+
+            if (x != nullptr && x->color == 1) {
+                x->color = 0;
+                node->parent->color = 0;
+                node->parent->parent->color = 1;
+
+                node = node->parent->parent;
+            }
+            else {
+                if (node == node->parent->left) {
+                    node = node->parent;
+                    rightRotate(node);
+                }
+
+                node->parent->color = 0;
+                node->parent->parent->color = 1;
+
+                leftRotate(node->parent->parent);
+            }
+        }
+        else {
+            x = node->parent->parent->right;
+
+            if (x != nullptr && x->color == 1) {
+                x->color = 0;
+                node->parent->color = 0;
+                node->parent->parent->color = 1;
+
+                node = node->parent->parent;
+            }
+            else {
+                if (node == node->parent->right) {
+                    node = node->parent;
+                    leftRotate(node);
+                }
+                node->parent->color = 0;
+                node->parent->parent->color = 1;
+
+                rightRotate(node->parent->parent);
+            }
+        }
+        if (node == root) {
+            break;
+        }
+    }
+}
+
+template<class T>
 inline RBT<T>::RBT() {
     root = new Node<T>();
 }
@@ -73,6 +131,47 @@ inline Node<T>* RBT<T>::getRoot() const {
 
 template<class T>
 inline void RBT<T>::insert(T data) {
+    Node<T>* node = new Node<T>();
+    node->parent = nullptr;
+    node->data = data;
+    node->left = nullptr;
+    node->right = nullptr;
+    node->color = 1;
+
+    Node<T>* y = nullptr;
+    Node<T>* x = this->root;
+
+    while (x != nullptr) {
+        y = x;
+        if (node->data < x->data) {
+            x = x->left;
+        }
+        else {
+            x = x->right;
+        }
+    }
+
+    node->parent = y;
+    if (y == nullptr) {
+        root = node;
+    }
+    else if (node->data < y->data) {
+        y->left = node;
+    }
+    else {
+        y->right = node;
+    }
+
+    if (node->parent == nullptr) {
+        node->color = 0;
+        return;
+    }
+
+    if (node->parent->parent == nullptr) {
+        return;
+    }
+
+    fixTreeAfterInsert(node);
 }
 
 template<class T>
@@ -80,8 +179,16 @@ inline void RBT<T>::remove(T data) {
 }
 
 template<class T>
+inline Node<T>* RBT<T>::searchFromNode(Node<T>* node, T data) const {
+    if (node == nullptr || node->data == data) return node;
+
+    if (data < node->data) return searchFromNode(node->left, data);
+    return searchFromNode(node->right, data);
+}
+
+template<class T>
 inline Node<T>* RBT<T>::search(T data) const {
-    return nullptr;
+    return searchFromNode(root, data);
 }
 
 template<class T>
