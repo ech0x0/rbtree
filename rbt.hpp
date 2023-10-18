@@ -34,6 +34,9 @@ public:
     Node<T>* searchFromNode(Node<T>* node, T data) const;
     Node<T>* search(T data) const;
 
+    Node<T>* minimum(const Node<T>* node) const;
+    Node<T>* maximum(const Node<T>* node) const;
+
     void leftRotate(Node<T>* node);
     void rightRotate(Node<T>* node);
 };
@@ -189,6 +192,24 @@ inline Node<T>* RBT<T>::searchFromNode(Node<T>* node, T data) const {
 template<class T>
 inline Node<T>* RBT<T>::search(T data) const {
     return searchFromNode(root, data);
+}
+
+template<class T>
+inline Node<T>* RBT<T>::minimum(const Node<T>* node) const {
+    Node<T>* x = node;
+    while (x->left != nullptr) {
+        x = x->left;
+    }
+    return x;
+}
+
+template<class T>
+inline Node<T>* RBT<T>::maximum(const Node<T>* node) const {
+    Node<T>* x = node;
+    while (x->right != nullptr) {
+        x = x->right;
+    }
+    return x;
 }
 
 template<class T>
