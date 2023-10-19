@@ -17,14 +17,14 @@ struct Node {
 };
 
 template<class T>
-class RBT {
+class RBTree {
 private:
     Node<T>* root;
 
     void fixTreeAfterInsert(Node<T>* node);
 public:
-    RBT();
-    ~RBT();
+    RBTree();
+    ~RBTree();
 
     Node<T>* getRoot() const;
 
@@ -34,8 +34,8 @@ public:
     Node<T>* searchFromNode(Node<T>* node, T data) const;
     Node<T>* search(T data) const;
 
-    Node<T>* minimum(const Node<T>* node) const;
-    Node<T>* maximum(const Node<T>* node) const;
+    Node<T>* minimum(Node<T>* node) const;
+    Node<T>* maximum(Node<T>* node) const;
 
     void leftRotate(Node<T>* node);
     void rightRotate(Node<T>* node);
@@ -64,7 +64,7 @@ inline Node<T>::~Node() {
 }
 
 template<class T>
-inline void RBT<T>::fixTreeAfterInsert(Node<T>* node) {
+inline void RBTree<T>::fixTreeAfterInsert(Node<T>* node) {
     Node<T>* x;
 
     while (node->parent->color == 1) {
@@ -118,22 +118,22 @@ inline void RBT<T>::fixTreeAfterInsert(Node<T>* node) {
 }
 
 template<class T>
-inline RBT<T>::RBT() {
-    root = new Node<T>();
+inline RBTree<T>::RBTree() {
+    root = nullptr;
 }
 
 template<class T>
-inline RBT<T>::~RBT() {
+inline RBTree<T>::~RBTree() {
     if (root) delete root;
 }
 
 template<class T>
-inline Node<T>* RBT<T>::getRoot() const {
+inline Node<T>* RBTree<T>::getRoot() const {
     return root;
 }
 
 template<class T>
-inline void RBT<T>::insert(T data) {
+inline void RBTree<T>::insert(T data) {
     Node<T>* node = new Node<T>();
     node->parent = nullptr;
     node->data = data;
@@ -178,11 +178,11 @@ inline void RBT<T>::insert(T data) {
 }
 
 template<class T>
-inline void RBT<T>::remove(T data) {
+inline void RBTree<T>::remove(T data) {
 }
 
 template<class T>
-inline Node<T>* RBT<T>::searchFromNode(Node<T>* node, T data) const {
+inline Node<T>* RBTree<T>::searchFromNode(Node<T>* node, T data) const {
     if (node == nullptr || node->data == data) return node;
 
     if (data < node->data) return searchFromNode(node->left, data);
@@ -190,12 +190,12 @@ inline Node<T>* RBT<T>::searchFromNode(Node<T>* node, T data) const {
 }
 
 template<class T>
-inline Node<T>* RBT<T>::search(T data) const {
+inline Node<T>* RBTree<T>::search(T data) const {
     return searchFromNode(root, data);
 }
 
 template<class T>
-inline Node<T>* RBT<T>::minimum(const Node<T>* node) const {
+inline Node<T>* RBTree<T>::minimum(Node<T>* node) const {
     Node<T>* x = node;
     while (x->left != nullptr) {
         x = x->left;
@@ -204,7 +204,7 @@ inline Node<T>* RBT<T>::minimum(const Node<T>* node) const {
 }
 
 template<class T>
-inline Node<T>* RBT<T>::maximum(const Node<T>* node) const {
+inline Node<T>* RBTree<T>::maximum(Node<T>* node) const {
     Node<T>* x = node;
     while (x->right != nullptr) {
         x = x->right;
@@ -213,7 +213,7 @@ inline Node<T>* RBT<T>::maximum(const Node<T>* node) const {
 }
 
 template<class T>
-inline void RBT<T>::leftRotate(Node<T>* node) {
+inline void RBTree<T>::leftRotate(Node<T>* node) {
     Node<T>* x = node->right;
     node->right = x->left;
 
@@ -238,7 +238,7 @@ inline void RBT<T>::leftRotate(Node<T>* node) {
 }
 
 template<class T>
-inline void RBT<T>::rightRotate(Node<T>* node) {
+inline void RBTree<T>::rightRotate(Node<T>* node) {
     Node<T>* x = node->left;
     node->left = x->right;
 
