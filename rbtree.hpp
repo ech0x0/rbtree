@@ -34,6 +34,10 @@ public:
     Node<T>* searchFromNode(Node<T>* node, T data) const;
     Node<T>* search(T data) const;
 
+    void preorder(Node<T>* node, void (*func)(Node<T>* x));
+    void inorder(Node<T>* node, void (*func)(Node<T>* x));
+    void postorder(Node<T>* node, void (*func)(Node<T>* x));
+
     Node<T>* minimum(Node<T>* node) const;
     Node<T>* maximum(Node<T>* node) const;
 
@@ -192,6 +196,33 @@ inline Node<T>* RBTree<T>::searchFromNode(Node<T>* node, T data) const {
 template<class T>
 inline Node<T>* RBTree<T>::search(T data) const {
     return searchFromNode(root, data);
+}
+
+template<class T>
+inline void RBTree<T>::preorder(Node<T>* node, void(*func)(Node<T>* x)) {
+    if (node != nullptr) {
+        func(node);
+        preorder(node->left, func);
+        preorder(node->right, func);
+    }
+}
+
+template<class T>
+inline void RBTree<T>::inorder(Node<T>* node, void(*func)(Node<T>* x)) {
+    if (node != nullptr) {
+        inorder(node->left, func);
+        func(node);
+        inorder(node->right, func);
+    }
+}
+
+template<class T>
+inline void RBTree<T>::postorder(Node<T>* node, void(*func)(Node<T>* x)) {
+    if (node != nullptr) {
+        postorder(node->left, func);
+        postorder(node->right, func);
+        func(node);
+    }
 }
 
 template<class T>
