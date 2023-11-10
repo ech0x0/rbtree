@@ -2,12 +2,12 @@
 #ifndef RBT_HPP
 #define RBT_HPP
 
-template<class T>
+template <class T>
 struct RBNode {
     RBNode<T>* parent;
     RBNode<T>* left;
     RBNode<T>* right;
-    //0 -> black, 1 -> red
+    // 0 -> black, 1 -> red
     char color;
     T data;
 
@@ -16,14 +16,14 @@ struct RBNode {
     ~RBNode();
 };
 
-template<class T>
+template <class T>
 class RBTree {
 private:
     RBNode<T>* root;
 
     void fixTreeAfterInsert(RBNode<T>* node);
     void fixTreeAfterRemove(RBNode<T>* node);
-    //set node x to y in x's parent pointers
+    // set node x to y in x's parent pointers
     void updateNodeParent(RBNode<T>* x, RBNode<T>* y);
 public:
     RBTree();
@@ -48,29 +48,31 @@ public:
     void rightRotate(RBNode<T>* node);
 };
 
-template<class T>
-inline RBNode<T>::RBNode() : data() {
+template <class T>
+inline RBNode<T>::RBNode()
+    : data() {
     parent = nullptr;
     left = nullptr;
     right = nullptr;
     color = 0;
 }
 
-template<class T>
-inline RBNode<T>::RBNode(RBNode<T>* iParent, RBNode<T>* iLeft, RBNode<T>* iRight, char iColor, T iData) : data(iData) {
+template <class T>
+inline RBNode<T>::RBNode(RBNode<T>* iParent, RBNode<T>* iLeft, RBNode<T>* iRight, char iColor, T iData)
+    : data(iData) {
     parent = iParent;
     left = iLeft;
     right = iRight;
     color = iColor;
 }
 
-template<class T>
+template <class T>
 inline RBNode<T>::~RBNode() {
     if (left) delete left;
     if (right) delete right;
 }
 
-template<class T>
+template <class T>
 inline void RBTree<T>::fixTreeAfterInsert(RBNode<T>* node) {
     RBNode<T>* x;
 
@@ -84,8 +86,7 @@ inline void RBTree<T>::fixTreeAfterInsert(RBNode<T>* node) {
                 node->parent->parent->color = 1;
 
                 node = node->parent->parent;
-            }
-            else {
+            } else {
                 if (node == node->parent->left) {
                     node = node->parent;
                     rightRotate(node);
@@ -96,8 +97,7 @@ inline void RBTree<T>::fixTreeAfterInsert(RBNode<T>* node) {
 
                 leftRotate(node->parent->parent);
             }
-        }
-        else {
+        } else {
             x = node->parent->parent->right;
 
             if (x != nullptr && x->color == 1) {
@@ -106,8 +106,7 @@ inline void RBTree<T>::fixTreeAfterInsert(RBNode<T>* node) {
                 node->parent->parent->color = 1;
 
                 node = node->parent->parent;
-            }
-            else {
+            } else {
                 if (node == node->parent->right) {
                     node = node->parent;
                     leftRotate(node);
@@ -118,13 +117,13 @@ inline void RBTree<T>::fixTreeAfterInsert(RBNode<T>* node) {
                 rightRotate(node->parent->parent);
             }
         }
-        if (node == root) {
+        if (node == root || node->parent == root) {
             break;
         }
     }
 }
 
-template<class T>
+template <class T>
 inline void RBTree<T>::fixTreeAfterRemove(RBNode<T>* node) {
     RBNode<T>* x;
     while (node != root && node->color == 0) {
@@ -140,8 +139,7 @@ inline void RBTree<T>::fixTreeAfterRemove(RBNode<T>* node) {
             if (x != nullptr && (x->left == nullptr || x->left->color == 0) && (x->right == nullptr || x->right->color == 0)) {
                 x->color = 1;
                 node = node->parent;
-            }
-            else {
+            } else {
                 if (x && (x->right == nullptr || x->right->color == 0)) {
                     if (x->left) x->left->color = 0;
                     x->color = 1;
@@ -155,8 +153,7 @@ inline void RBTree<T>::fixTreeAfterRemove(RBNode<T>* node) {
                 leftRotate(node->parent);
                 node = root;
             }
-        }
-        else {
+        } else {
             x = node->parent->left;
             if (x != nullptr && x->color == 1) {
                 x->color = 0;
@@ -168,8 +165,7 @@ inline void RBTree<T>::fixTreeAfterRemove(RBNode<T>* node) {
             if (x != nullptr && (x->left == nullptr || x->left->color == 0) && (x->right == nullptr || x->right->color == 0)) {
                 x->color = 1;
                 node = node->parent;
-            }
-            else {
+            } else {
                 if (x != nullptr && x->left != nullptr && x->left->color == 0) {
                     if (x->right) x->right->color = 0;
                     x->color = 1;
@@ -188,40 +184,50 @@ inline void RBTree<T>::fixTreeAfterRemove(RBNode<T>* node) {
     node->color = 0;
 }
 
-template<class T>
+template <class T>
 inline void RBTree<T>::updateNodeParent(RBNode<T>* x, RBNode<T>* y) {
     if (x == nullptr) return;
 
     if (x->parent == nullptr) {
         root = y;
-    }
-    else if (x == x->parent->left) {
+    } else if (x == x->parent->left) {
         x->parent->left = y;
-    }
-    else {
+    } else {
         x->parent->right = y;
     }
 
     if (y != nullptr) y->parent = x->parent;
 }
 
-template<class T>
+template <class T>
 inline RBTree<T>::RBTree() {
     root = nullptr;
 }
 
-template<class T>
+template <class T>
 inline RBTree<T>::~RBTree() {
     if (root) delete root;
 }
 
-template<class T>
+template <class T>
 inline RBNode<T>* RBTree<T>::getRoot() const {
     return root;
 }
 
-template<class T>
+template <class T>
 inline void RBTree<T>::insert(T data) {
+    RBNode<T>* y = nullptr;
+    RBNode<T>* x = this->root;
+    while (x != nullptr) {
+        y = x;
+        if (data == x->data) return;
+        else if (data < x->data) {
+            x = x->left;
+        } else {
+            x = x->right;
+        }
+    }
+
     RBNode<T>* node = new RBNode<T>();
     node->parent = nullptr;
     node->data = data;
@@ -229,27 +235,12 @@ inline void RBTree<T>::insert(T data) {
     node->right = nullptr;
     node->color = 1;
 
-    RBNode<T>* y = nullptr;
-    RBNode<T>* x = this->root;
-
-    while (x != nullptr) {
-        y = x;
-        if (node->data < x->data) {
-            x = x->left;
-        }
-        else {
-            x = x->right;
-        }
-    }
-
     node->parent = y;
     if (y == nullptr) {
         root = node;
-    }
-    else if (node->data < y->data) {
+    } else if (node->data < y->data) {
         y->left = node;
-    }
-    else {
+    } else {
         y->right = node;
     }
 
@@ -265,7 +256,7 @@ inline void RBTree<T>::insert(T data) {
     fixTreeAfterInsert(node);
 }
 
-template<class T>
+template <class T>
 inline void RBTree<T>::remove(RBNode<T>* node) {
     if (node == nullptr) return;
 
@@ -275,23 +266,19 @@ inline void RBTree<T>::remove(RBNode<T>* node) {
     if (node->left == nullptr && node->right == nullptr) {
         x = node->parent;
         updateNodeParent(node, nullptr);
-    }
-    else if (node->left == nullptr) {
+    } else if (node->left == nullptr) {
         x = node->right;
         updateNodeParent(node, node->right);
-    }
-    else if (node->right == nullptr) {
+    } else if (node->right == nullptr) {
         x = node->left;
         updateNodeParent(node, node->left);
-    }
-    else {
+    } else {
         RBNode<T>* y = minimum(node->right);
         originalColor = y->color;
         x = y->right;
         if (y->parent == node) {
             if (x) x->parent = y;
-        }
-        else {
+        } else {
             updateNodeParent(y, y->right);
             y->right = node->right;
             y->right->parent = y;
@@ -312,7 +299,7 @@ inline void RBTree<T>::remove(RBNode<T>* node) {
     }
 }
 
-template<class T>
+template <class T>
 inline RBNode<T>* RBTree<T>::searchFromNode(RBNode<T>* node, T data) const {
     if (node == nullptr || node->data == data) return node;
 
@@ -320,13 +307,13 @@ inline RBNode<T>* RBTree<T>::searchFromNode(RBNode<T>* node, T data) const {
     return searchFromNode(node->right, data);
 }
 
-template<class T>
+template <class T>
 inline RBNode<T>* RBTree<T>::search(T data) const {
     return searchFromNode(root, data);
 }
 
-template<class T>
-inline void RBTree<T>::preorder(RBNode<T>* node, void(*func)(RBNode<T>* x)) {
+template <class T>
+inline void RBTree<T>::preorder(RBNode<T>* node, void (*func)(RBNode<T>* x)) {
     if (node != nullptr) {
         func(node);
         preorder(node->left, func);
@@ -334,8 +321,8 @@ inline void RBTree<T>::preorder(RBNode<T>* node, void(*func)(RBNode<T>* x)) {
     }
 }
 
-template<class T>
-inline void RBTree<T>::inorder(RBNode<T>* node, void(*func)(RBNode<T>* x)) {
+template <class T>
+inline void RBTree<T>::inorder(RBNode<T>* node, void (*func)(RBNode<T>* x)) {
     if (node != nullptr) {
         inorder(node->left, func);
         func(node);
@@ -343,8 +330,8 @@ inline void RBTree<T>::inorder(RBNode<T>* node, void(*func)(RBNode<T>* x)) {
     }
 }
 
-template<class T>
-inline void RBTree<T>::postorder(RBNode<T>* node, void(*func)(RBNode<T>* x)) {
+template <class T>
+inline void RBTree<T>::postorder(RBNode<T>* node, void (*func)(RBNode<T>* x)) {
     if (node != nullptr) {
         postorder(node->left, func);
         postorder(node->right, func);
@@ -352,7 +339,7 @@ inline void RBTree<T>::postorder(RBNode<T>* node, void(*func)(RBNode<T>* x)) {
     }
 }
 
-template<class T>
+template <class T>
 inline RBNode<T>* RBTree<T>::minimum(RBNode<T>* node) const {
     RBNode<T>* x = node;
     while (x->left != nullptr) {
@@ -361,7 +348,7 @@ inline RBNode<T>* RBTree<T>::minimum(RBNode<T>* node) const {
     return x;
 }
 
-template<class T>
+template <class T>
 inline RBNode<T>* RBTree<T>::maximum(RBNode<T>* node) const {
     RBNode<T>* x = node;
     while (x->right != nullptr) {
@@ -370,8 +357,10 @@ inline RBNode<T>* RBTree<T>::maximum(RBNode<T>* node) const {
     return x;
 }
 
-template<class T>
+template <class T>
 inline void RBTree<T>::leftRotate(RBNode<T>* node) {
+    if (node->right == nullptr) return;
+
     RBNode<T>* x = node->right;
     node->right = x->left;
 
@@ -383,11 +372,9 @@ inline void RBTree<T>::leftRotate(RBNode<T>* node) {
 
     if (node->parent == nullptr) {
         this->root = x;
-    }
-    else if (node == node->parent->left) {
+    } else if (node == node->parent->left) {
         node->parent->left = x;
-    }
-    else {
+    } else {
         node->parent->right = x;
     }
 
@@ -395,8 +382,10 @@ inline void RBTree<T>::leftRotate(RBNode<T>* node) {
     node->parent = x;
 }
 
-template<class T>
+template <class T>
 inline void RBTree<T>::rightRotate(RBNode<T>* node) {
+    if (node->left == nullptr) return;
+
     RBNode<T>* x = node->left;
     node->left = x->right;
 
@@ -408,11 +397,9 @@ inline void RBTree<T>::rightRotate(RBNode<T>* node) {
 
     if (node->parent == nullptr) {
         this->root = x;
-    }
-    else if (node == node->parent->right) {
+    } else if (node == node->parent->right) {
         node->parent->right = x;
-    }
-    else {
+    } else {
         node->parent->left = x;
     }
 
